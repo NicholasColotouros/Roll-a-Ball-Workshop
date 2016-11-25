@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 using System.Collections;
 
 public class PlayerController : MonoBehaviour
@@ -16,12 +17,15 @@ public class PlayerController : MonoBehaviour
         count = 0;
         updateCountText();
         winText.text = "";
+        Material mat = gameObject.GetComponent<Renderer>().material;
+        Color c = mat.color;
+        mat.color = new Color(c.r, c.b, c.b, 0.5f);
     }
 
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.R))
-            Application.LoadLevel(0);
+        if (Input.GetKeyDown(KeyCode.R))
+            SceneManager.LoadScene(0);
     }
 
 	// This is called at regular intervals
@@ -44,14 +48,18 @@ public class PlayerController : MonoBehaviour
             updateCountText();
 
             if (count == pickupsToWin)
+            {
                 winText.text = "YOU WIN!";
+                Time.timeScale = 0;
+                StartCoroutine(waitFiveSecondsAndRestart());
+            }
         }
 
         if (other.gameObject.tag == "Hole")
         {
             winText.text = "YOU LOSE";
             Time.timeScale = 0;
-            StartCoroutine(waitFiveSeconds());
+            StartCoroutine(waitFiveSecondsAndRestart());
         }
     }
 
@@ -60,10 +68,10 @@ public class PlayerController : MonoBehaviour
         countText.text = "Count: " + count.ToString();
     }
 
-    IEnumerator waitFiveSeconds()
+    IEnumerator waitFiveSecondsAndRestart()
     {
         yield return new WaitForSecondsRealtime(4);
         Time.timeScale = 1;
-        Application.LoadLevel(0);
+        SceneManager.LoadScene(0);
     }
 }
