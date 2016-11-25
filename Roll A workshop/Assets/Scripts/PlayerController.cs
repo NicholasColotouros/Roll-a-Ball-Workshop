@@ -18,6 +18,12 @@ public class PlayerController : MonoBehaviour
         winText.text = "";
     }
 
+    void Update()
+    {
+        if(Input.GetKeyDown(KeyCode.R))
+            Application.LoadLevel(0);
+    }
+
 	// This is called at regular intervals
     void FixedUpdate()
     {
@@ -40,10 +46,24 @@ public class PlayerController : MonoBehaviour
             if (count == pickupsToWin)
                 winText.text = "YOU WIN!";
         }
+
+        if (other.gameObject.tag == "Hole")
+        {
+            winText.text = "YOU LOSE";
+            Time.timeScale = 0;
+            StartCoroutine(waitFiveSeconds());
+        }
     }
 
     void updateCountText()
     {
         countText.text = "Count: " + count.ToString();
+    }
+
+    IEnumerator waitFiveSeconds()
+    {
+        yield return new WaitForSecondsRealtime(4);
+        Time.timeScale = 1;
+        Application.LoadLevel(0);
     }
 }
